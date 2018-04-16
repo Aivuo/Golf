@@ -8,6 +8,7 @@ namespace Golf
 {
     class GameOfGolf
     {
+        double startingDistance = 0;
         double distance = 0;
 
 
@@ -16,6 +17,7 @@ namespace Golf
             Random rnd = new Random();
 
             distance = rnd.Next(150, 230);
+            startingDistance = distance;
 
             Console.WriteLine(distance + "m");
         }
