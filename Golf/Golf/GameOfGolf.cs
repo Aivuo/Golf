@@ -10,13 +10,35 @@ namespace Golf
     {
         double startingDistance = 0;
         double distance = 0;
+        int par = 0;
+        int numberOfSwings = 0;
+        bool stopPlaying = false;
+
+        string plural = " ";
+        List<string> log = new List<string>();
 
 
         public GameOfGolf()
         {
             Random rnd = new Random();
 
-            distance = rnd.Next(150, 230);
+            switch (rnd.Next(0,10))
+            {
+                case 0:
+                    distance = rnd.Next(412, 632);
+                    par = 5;
+                    break;
+                case 1:
+                case 2:
+                case 3:
+                    distance = rnd.Next(230, 412);
+                    par = 4;
+                    break;
+                default:
+                    distance = rnd.Next(150, 230);
+                    par = 3;
+                    break;
+            }
             startingDistance = distance;
 
             Console.WriteLine(distance + "m");
@@ -27,28 +49,100 @@ namespace Golf
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine(String.Format("{0:0.00}m to the hole" +
+                Console.WriteLine(String.Format("\t{0:0.00}m to the hole" +
+                    "\n\tPar: {3}" +
+                    "\n\tYou have swung {1} time{2}" +
                     "\n\t1: Hit the ball" +
-                    "\n\t2: End", distance));
+                    "\n\t2: End", distance, numberOfSwings, plural, par));
 
                 switch (Console.ReadKey().Key)
                 {
                     case ConsoleKey.D1:
                     case ConsoleKey.NumPad1:
+                        numberOfSwings++;
                         HitTheBall();
                         break;
                     case ConsoleKey.D2:
                     case ConsoleKey.NumPad2:
                         Console.WriteLine("Leave now and never come back!");
+                        Console.ReadKey();
                         return;
-
                     default:
                         Console.WriteLine("Errr.... Not correct!");
                         break;
+                }
+                stopPlaying = CheckVictory();
 
+                if (stopPlaying)
+                {
+                    Console.ReadKey();
+                    return;
                 }
                 Console.ReadKey();
             }
+        }
+
+        private bool CheckVictory()
+        {
+            bool quit = false;
+
+            if (distance >= 0 && distance <= 0.1)
+            {
+                Console.Clear();
+                if (numberOfSwings == par - 3)
+                {
+                    Console.WriteLine("\tDOUBLE EAGLE! Very well done!");
+                }
+                else if (numberOfSwings == par - 2)
+                {
+                    Console.WriteLine("\tEAGLE! Well done!");
+                }
+                else if (numberOfSwings == par - 1)
+                {
+                    Console.WriteLine("\tBirdie. Not bad!");
+                }
+                else if (numberOfSwings == par)
+                {
+                    Console.WriteLine("\tPar. Good.");
+                }
+                else if (numberOfSwings == par + 1)
+                {
+                    Console.WriteLine("\tBogey. You can do better!");
+                }
+                else
+                {
+                    Console.WriteLine("\tDouble bogey... Really...");
+                }
+
+                Console.WriteLine(String.Format("\t You finished with {0} swing{1}" +
+                                                "\n\t At a par {2}hole that was {3}m long", numberOfSwings, plural, par, startingDistance));
+
+                foreach (var l in log)
+                {
+                    Console.WriteLine(l);
+                }
+
+                quit = true;
+            }
+
+            if (numberOfSwings >= par + 3)
+            {
+                Console.Clear();
+                Console.WriteLine("\tHow did you get onto the pro circuit?");
+
+                foreach (var l in log)
+                {
+                    Console.WriteLine(l);
+                }
+                quit = true;
+            }
+            else if(distance > startingDistance * 1.5)
+            {
+                Console.WriteLine("What just happened! You are outside the course!");
+                quit = true;
+            }
+
+            return quit;
         }
 
         private void HitTheBall()
@@ -62,6 +156,8 @@ namespace Golf
             string userInput = null;
             string output = null;
 
+
+
             Console.WriteLine("\tInput at witch angle you would like to fire the ball:");
             userInput = Console.ReadLine();
             double.TryParse(userInput, out angle);
@@ -74,7 +170,17 @@ namespace Golf
 
             distanceTravelled = Math.Pow(velocity, 2) / gravity * Math.Sin(2 * angleInRadians);
 
-            output = String.Format("The ball flies: {0:0.00}m", distanceTravelled);
+            if (numberOfSwings == 1)
+            {
+                plural = " ";
+            }
+            else
+            {
+                plural = "s";
+            }
+
+            output = String.Format("The ball flies: {0:0.00}m \nYou have swung {1} time{2}", distanceTravelled, numberOfSwings, plural);
+            log.Add(output);
             Console.WriteLine(output);
             distance -= distanceTravelled;
 
@@ -83,7 +189,8 @@ namespace Golf
                 distance = -distance;
             }
 
-            output = String.Format("There is: {0:0.00}m left to the hole", distance);
+            output = String.Format("There is: {0:0.00}m left to the hole\n", distance);
+            log.Add(output);
             Console.WriteLine(output);
             
         }
