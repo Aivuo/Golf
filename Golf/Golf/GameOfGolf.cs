@@ -64,11 +64,11 @@ namespace Golf
                         break;
                     case ConsoleKey.D2:
                     case ConsoleKey.NumPad2:
-                        Console.WriteLine("Leave now and never come back!");
+                        Console.WriteLine("\tWe hope to see you again!");
                         Console.ReadKey();
                         return;
                     default:
-                        Console.WriteLine("Errr.... Not correct!");
+                        Console.WriteLine("\tErrr.... Not correct!");
                         break;
                 }
                 stopPlaying = CheckVictory();
@@ -138,7 +138,7 @@ namespace Golf
             }
             else if(distance > startingDistance * 1.5)
             {
-                Console.WriteLine("What just happened! You are outside the course!");
+                Console.WriteLine("\tWhat just happened! You are outside the course!");
                 quit = true;
             }
 
@@ -196,8 +196,3 @@ namespace Golf
         }
     }
 }
-
-
-//        ○ Angle In Radians: (Math.PI / 180) * angle
-//        ○ Distance: Math.Pow(velocity, 2) / GRAVITY* Math.Sin(2 * angleInRadians)
-//• Gravity is equal to 9.8
